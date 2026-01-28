@@ -1,11 +1,9 @@
-// Configuration - Replace with your Teachable Machine model URL
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/X3VWKhkZu/";
 
 // Global variables
 let model, webcam, isRunning = false;
-const maxPredictions = 4; // Perfect, Broken, Burnt, Not Cookie
+const maxPredictions = 4; 
 
-// DOM Elements
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const uploadBtn = document.getElementById('uploadBtn');
@@ -22,16 +20,13 @@ const alertSection = document.getElementById('alertSection');
 const predictionsDiv = document.getElementById('predictions');
 const webcamWrapper = document.getElementById('webcam-wrapper');
 
-// Current mode
-let currentMode = 'camera'; // 'camera' or 'upload'
+let currentMode = 'camera'; 
 let uploadedImage = null;
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
-// Initialize application
 async function initializeApp() {
     showStatus('Initializing application...', 'loading');
     
@@ -45,7 +40,6 @@ async function initializeApp() {
     }
 }
 
-// Load the Teachable Machine model
 async function loadModel() {
     try {
         showStatus('Loading AI model...', 'loading');
@@ -55,7 +49,6 @@ async function loadModel() {
         
         model = await tmImage.load(modelURL, metadataURL);
         
-        // Initialize prediction display
         initializePredictionDisplay();
         
         return true;
@@ -64,7 +57,6 @@ async function loadModel() {
     }
 }
 
-// Setup event listeners
 function setupEventListeners() {
     startBtn.addEventListener('click', startDetection);
     stopBtn.addEventListener('click', stopDetection);
@@ -80,11 +72,9 @@ function setupEventListeners() {
     uploadContainer.addEventListener('drop', handleDrop);
 }
 
-// Initialize prediction display
 function initializePredictionDisplay() {
     predictionsDiv.innerHTML = '';
     
-    // Create placeholder items that will be updated with actual predictions
     for (let i = 0; i < maxPredictions; i++) {
         const item = document.createElement('div');
         item.className = 'prediction-item';
@@ -101,7 +91,6 @@ function initializePredictionDisplay() {
     }
 }
 
-// Start detection
 async function startDetection() {
     if (!model) {
         showStatus('Model not loaded. Please refresh the page.', 'error');
@@ -112,22 +101,19 @@ async function startDetection() {
         showStatus('Starting camera...', 'loading');
         startBtn.disabled = true;
         
-        // Initialize webcam
-        const flip = true; // flip for mirror effect
+        // webcam
+        const flip = true; 
         webcam = new tmImage.Webcam(400, 400, flip);
         await webcam.setup();
         await webcam.play();
         
-        // Add canvas to DOM
         webcamWrapper.appendChild(webcam.canvas);
         
-        // Update UI
         isRunning = true;
         startBtn.style.display = 'none';
         stopBtn.style.display = 'inline-block';
         hideStatus();
         
-        // Start prediction loop
         window.requestAnimationFrame(predictionLoop);
         
     } catch (error) {
@@ -137,7 +123,6 @@ async function startDetection() {
     }
 }
 
-// Stop detection
 function stopDetection() {
     isRunning = false;
     
@@ -149,7 +134,6 @@ function stopDetection() {
         }
     }
     
-    // Update UI
     startBtn.style.display = 'inline-block';
     startBtn.disabled = false;
     stopBtn.style.display = 'none';
@@ -158,7 +142,6 @@ function stopDetection() {
     showStatus('Detection stopped.', 'success');
 }
 
-// Prediction loop
 async function predictionLoop() {
     if (!isRunning) return;
     
@@ -167,16 +150,13 @@ async function predictionLoop() {
     window.requestAnimationFrame(predictionLoop);
 }
 
-// Make prediction
 async function predict() {
     const prediction = await model.predict(webcam.canvas);
     
-    // Update displays
     updatePredictionDisplay(prediction);
     updateAlert(prediction);
 }
 
-// Update prediction display
 function updatePredictionDisplay(predictions) {
     const items = predictionsDiv.querySelectorAll('.prediction-item');
     
@@ -189,7 +169,6 @@ function updatePredictionDisplay(predictions) {
             const progressFill = item.querySelector('.progress-fill');
             const labelSpan = item.querySelector('.prediction-label');
             
-            // Update the label to match prediction class name
             labelSpan.textContent = pred.className;
             confidenceSpan.textContent = percentage + '%';
             progressFill.style.width = percentage + '%';
@@ -197,9 +176,7 @@ function updatePredictionDisplay(predictions) {
     });
 }
 
-// Update alert based on highest prediction
 function updateAlert(predictions) {
-    // Find highest confidence prediction
     let highest = predictions[0];
     predictions.forEach(pred => {
         if (pred.probability > highest.probability) {
@@ -209,7 +186,6 @@ function updateAlert(predictions) {
     
     const confidence = (highest.probability * 100).toFixed(1);
     
-    // Only show alert if confidence > 70%
     if (confidence > 70) {
         const className = highest.className.toLowerCase().replace(' ', '-');
         let message = '';
@@ -236,38 +212,29 @@ function updateAlert(predictions) {
     }
 }
 
-// Show status message
 function showStatus(message, type) {
     statusDiv.textContent = message;
     statusDiv.className = `status-message show ${type}`;
 }
-
-// Hide status message
 function hideStatus() {
     statusDiv.className = 'status-message';
 }
-
-// Error handling
 window.addEventListener('error', (event) => {
     console.error('Application error:', event.error);
     showStatus('An error occurred. Please refresh the page.', 'error');
 });
 
-// Mode switching
 function switchMode(mode) {
     currentMode = mode;
     
-    // Stop camera if running
     if (isRunning) {
         stopDetection();
     }
     
-    // Clear upload if switching away
     if (mode === 'camera' && uploadedImage) {
         clearUpload();
     }
     
-    // Update tabs
     if (mode === 'camera') {
         cameraTab.classList.add('active');
         uploadTab.classList.remove('active');
@@ -280,12 +247,10 @@ function switchMode(mode) {
         cameraSection.style.display = 'none';
     }
     
-    // Clear alert
     alertSection.innerHTML = '';
     hideStatus();
 }
 
-// Handle file selection
 function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
@@ -293,7 +258,6 @@ function handleFileSelect(event) {
     }
 }
 
-// Process image file
 function processImageFile(file) {
     if (!file.type.startsWith('image/')) {
         showStatus('Please select a valid image file.', 'error');
@@ -304,15 +268,12 @@ function processImageFile(file) {
     
     reader.onload = async (e) => {
         try {
-            // Display image
             uploadPreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded cookie">`;
             uploadedImage = e.target.result;
             
-            // Update buttons
             uploadBtn.style.display = 'none';
             clearBtn.style.display = 'inline-block';
             
-            // Make prediction
             showStatus('Analyzing image...', 'loading');
             await predictUploadedImage(e.target.result);
             hideStatus();
@@ -326,26 +287,21 @@ function processImageFile(file) {
     reader.readAsDataURL(file);
 }
 
-// Predict uploaded image
 async function predictUploadedImage(imageSrc) {
     return new Promise((resolve, reject) => {
         const img = new Image();
         
         img.onload = async () => {
             try {
-                // Create canvas and draw image
                 const canvas = document.createElement('canvas');
                 canvas.width = 224;
                 canvas.height = 224;
                 const ctx = canvas.getContext('2d');
                 
-                // Draw and resize image
                 ctx.drawImage(img, 0, 0, 224, 224);
                 
-                // Get prediction
                 const prediction = await model.predict(canvas);
                 
-                // Update displays
                 updatePredictionDisplay(prediction);
                 updateAlert(prediction);
                 
@@ -360,7 +316,6 @@ async function predictUploadedImage(imageSrc) {
     });
 }
 
-// Clear uploaded photo
 function clearUpload() {
     uploadPreview.innerHTML = `
         <div class="upload-placeholder">
@@ -374,11 +329,9 @@ function clearUpload() {
     clearBtn.style.display = 'none';
     alertSection.innerHTML = '';
     
-    // Reset predictions
     initializePredictionDisplay();
 }
 
-// Drag and drop handlers
 function handleDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
