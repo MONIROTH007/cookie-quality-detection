@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Quality Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍪 Cookie Quality Inspector</h1>
+            <p>AI-Powered Quality Control System</p>
+        </header>
+
+        <main>
+            <!-- Status Message -->
+            <div id="status" class="status-message"></div>
+
+            <!-- Mode Selection -->
+            <section class="mode-section">
+                <div class="mode-tabs">
+                    <button id="cameraTab" class="tab-btn active">📹 Camera</button>
+                    <button id="uploadTab" class="tab-btn">📁 Upload Photo</button>
+                </div>
+            </section>
+
+            <!-- Camera Section -->
+            <section id="cameraSection" class="camera-section">
+                <div class="camera-container">
+                    <div id="webcam-wrapper"></div>
+                </div>
+                
+                <div class="controls">
+                    <button id="startBtn" class="btn btn-primary">Start Detection</button>
+                    <button id="stopBtn" class="btn btn-secondary" style="display: none;">Stop Detection</button>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="uploadSection" class="upload-section" style="display: none;">
+                <div class="upload-container">
+                    <div id="upload-preview" class="upload-preview">
+                        <div class="upload-placeholder">
+                            <span class="upload-icon">📷</span>
+                            <p>Click "Choose Photo" or drag and drop an image here</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <button id="uploadBtn" class="btn btn-primary">Choose Photo</button>
+                    <button id="clearBtn" class="btn btn-secondary" style="display: none;">Clear Photo</button>
+                </div>
+            </section>
+
+            <!-- Alert Section -->
+            <section id="alertSection" class="alert-section"></section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <h2>Detection Results</h2>
+                <div id="predictions" class="predictions-container"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by Teachable Machine & TensorFlow.js</p>
+        </footer>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
